@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     getBatteryPercentage();
     getBatteryState();
-    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       getBatteryPercentage();
     });
   }
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void getBatteryPercentage() async {
     final batteryLevel = await battery.batteryLevel;
 
-    this.level = batteryLevel;
+    level = batteryLevel;
 
     setState(() {});
   }
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void getBatteryState() {
     streamSubscription = battery.onBatteryStateChanged.listen((state) {
       setState(() {
-        this.batteryState = state;
+        batteryState = state;
       });
     });
   }
@@ -67,34 +67,34 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     streamSubscription.cancel();
     timer.cancel();
+    super.dispose(); // Call the superclass dispose method
   }
 
-  Widget BuildBattery(BatteryState state) {
+  Widget buildBattery(BatteryState state) {
     switch (state) {
       case BatteryState.full:
-        return Container(
+        return const SizedBox(
+          width: 200,
+          height: 200,
           child: Icon(
             Icons.battery_full,
             size: 200,
             color: Colors.green,
           ),
-          width: 200,
-          height: 200,
         );
       case BatteryState.charging:
-        return Container(
+        return const SizedBox(
+          width: 200,
+          height: 200,
           child:
               Icon(Icons.battery_charging_full, size: 200, color: Colors.blue),
-          width: 200,
-          height: 200,
         );
       case BatteryState.discharging:
-
       default:
-        return Container(
-          child: Icon(Icons.battery_alert, size: 200, color: Colors.grey),
+        return const SizedBox(
           width: 200,
           height: 200,
+          child: Icon(Icons.battery_alert, size: 200, color: Colors.grey),
         );
     }
   }
@@ -107,10 +107,10 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BuildBattery(batteryState),
+              buildBattery(batteryState),
               Text(
-                '${level} %',
-                style: TextStyle(color: Colors.black, fontSize: 25),
+                '$level %',
+                style: const TextStyle(color: Colors.black, fontSize: 25),
               ),
             ],
           ),
