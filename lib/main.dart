@@ -8,130 +8,114 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: const Color(0x9f4376f8),
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final Battery _battery = Battery();
-
-  BatteryState? _batteryState;
-  StreamSubscription<BatteryState>? _batteryStateSubscription;
+  var battery = Battery();
+  int level = 100;
+  BatteryState batteryState = BatteryState.full;
+  late Timer timer;
+  late StreamSubscription streamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _battery.batteryState.then(_updateBatteryState);
-    _batteryStateSubscription =
-        _battery.onBatteryStateChanged.listen(_updateBatteryState);
+    getBatteryPercentage();
+    getBatteryState();
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      getBatteryPercentage();
+    });
   }
 
-  void _updateBatteryState(BatteryState state) {
-    if (_batteryState == state) return;
-    setState(() {
-      _batteryState = state;
+  void getBatteryPercentage() async {
+    final batteryLevel = await battery.batteryLevel;
+
+    this.level = batteryLevel;
+
+    setState(() {});
+  }
+
+  void getBatteryState() {
+    streamSubscription = battery.onBatteryStateChanged.listen((state) {
+      setState(() {
+        this.batteryState = state;
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    streamSubscription.cancel();
+    timer.cancel();
+  }
+
+  Widget BuildBattery(BatteryState state) {
+    switch (state) {
+      case BatteryState.full:
+        return Container(
+          child: Icon(
+            Icons.battery_full,
+            size: 200,
+            color: Colors.green,
+          ),
+          width: 200,
+          height: 200,
+        );
+      case BatteryState.charging:
+        return Container(
+          child:
+              Icon(Icons.battery_charging_full, size: 200, color: Colors.blue),
+          width: 200,
+          height: 200,
+        );
+      case BatteryState.discharging:
+
+      default:
+        return Container(
+          child: Icon(Icons.battery_alert, size: 200, color: Colors.grey),
+          width: 200,
+          height: 200,
+        );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Battery plus example app'),
-        elevation: 4,
-      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '$_batteryState',
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                _battery.batteryLevel.then(
-                  (batteryLevel) {
-                    showDialog<void>(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        content: Text('Battery: $batteryLevel%'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('OK'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              child: const Text('Get battery level'),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                _battery.isInBatterySaveMode.then(
-                  (isInPowerSaveMode) {
-                    showDialog<void>(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: const Text(
-                          'Is in Battery Save mode?',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        content: Text(
-                          "$isInPowerSaveMode",
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Close'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              child: const Text('Is in Battery Save mode?'),
-            )
-          ],
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BuildBattery(batteryState),
+              Text(
+                '${level} %',
+                style: TextStyle(color: Colors.black, fontSize: 25),
+              ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    if (_batteryStateSubscription != null) {
-      _batteryStateSubscription!.cancel();
-    }
   }
 }
