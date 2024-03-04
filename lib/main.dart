@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:battery_plus/battery_plus.dart';
@@ -10,7 +11,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,55 +67,113 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     streamSubscription.cancel();
     timer.cancel();
-    super.dispose(); // Call the superclass dispose method
+    super.dispose();
   }
 
   Widget buildBattery(BatteryState state) {
+    Color textColor = Colors.black;
+
     switch (state) {
       case BatteryState.full:
-        return const SizedBox(
-          width: 200,
-          height: 200,
-          child: Icon(
-            Icons.battery_full,
-            size: 200,
-            color: Colors.green,
-          ),
-        );
+        textColor = Colors.green;
+        break;
       case BatteryState.charging:
-        return const SizedBox(
-          width: 200,
-          height: 200,
-          child:
-              Icon(Icons.battery_charging_full, size: 200, color: Colors.blue),
-        );
+        textColor = Colors.blue;
+        break;
       case BatteryState.discharging:
       default:
-        return const SizedBox(
-          width: 200,
-          height: 200,
-          child: Icon(Icons.battery_alert, size: 200, color: Colors.grey),
-        );
+        textColor = Colors.grey;
+        break;
     }
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          painter: CirclePainter(
+            color: textColor, // Adjusted to use textColor
+            batteryLevel: level.toDouble(),
+          ),
+          child: const SizedBox(
+            width: 200,
+            height: 200,
+          ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '$level %',
+              style: TextStyle(
+                  color: textColor, fontSize: 25), // Adjusted to use textColor
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    Color textColor = Colors.black; // Default color
+    if (batteryState == BatteryState.full) {
+      textColor = Colors.green;
+    } else if (batteryState == BatteryState.charging) {
+      textColor = Colors.blue;
+    } else {
+      textColor = Colors.grey;
+    }
+
     return Scaffold(
       body: Center(
         child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
               buildBattery(batteryState),
-              Text(
-                '$level %',
-                style: const TextStyle(color: Colors.black, fontSize: 25),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$level %',
+                    style: TextStyle(color: textColor, fontSize: 25),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class CirclePainter extends CustomPainter {
+  final Color color;
+  final double batteryLevel;
+
+  CirclePainter({required this.color, required this.batteryLevel});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 10
+      ..style = PaintingStyle.stroke;
+
+    final sweepAngle = 360.0 * (batteryLevel / 100); // Adjusted here
+
+    canvas.drawArc(
+      Rect.fromCircle(center: size.center(Offset.zero), radius: size.width / 2),
+      -90.0 * (pi / 180), // startAngle
+      sweepAngle * (pi / 180), // sweepAngle
+      false,
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
