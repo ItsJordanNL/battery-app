@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 200),
       tween: ColorTween(begin: textColor, end: textColor),
       builder: (context, dynamic color, child) {
         return Stack(
