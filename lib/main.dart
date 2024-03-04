@@ -103,9 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$level %',
+              '$level%',
               style: TextStyle(
-                  color: textColor, fontSize: 25), // Adjusted to use textColor
+                  color: textColor,
+                  fontSize: 50, // Adjusted to use textColor
+                  fontWeight: FontWeight.bold), // light
             ),
           ],
         ),
@@ -126,22 +128,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       body: Center(
-        child: Container(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              buildBattery(batteryState),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$level %',
-                    style: TextStyle(color: textColor, fontSize: 25),
-                  ),
-                ],
-              ),
-            ],
-          ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            buildBattery(batteryState),
+            const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+          ],
         ),
       ),
     );
