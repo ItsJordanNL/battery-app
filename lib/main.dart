@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  Widget buildBattery(BatteryState state) {
+  Widget buildBattery(BatteryState state, double animationValue) {
     Color textColor = Colors.black;
 
     switch (state) {
@@ -86,52 +86,50 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
     }
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        CustomPaint(
-          painter: CirclePainter(
-            color: textColor, // Adjusted to use textColor
-            batteryLevel: level.toDouble(),
-          ),
-          child: const SizedBox(
-            width: 200,
-            height: 200,
-          ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return TweenAnimationBuilder(
+      duration: const Duration(milliseconds: 500),
+      tween: ColorTween(begin: textColor, end: textColor),
+      builder: (context, dynamic color, child) {
+        return Stack(
+          alignment: Alignment.center,
           children: [
-            Text(
-              '$level%',
-              style: TextStyle(
-                  color: textColor,
-                  fontSize: 50, // Adjusted to use textColor
-                  fontWeight: FontWeight.bold), // light
+            CustomPaint(
+              painter: CirclePainter(
+                color: color, // Adjusted to use animated color
+                batteryLevel: level.toDouble(),
+              ),
+              child: const SizedBox(
+                width: 200,
+                height: 200,
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$level%',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 50, // Adjusted to use animated color
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = Colors.black; // Default color
-    if (batteryState == BatteryState.full) {
-      textColor = Colors.green;
-    } else if (batteryState == BatteryState.charging) {
-      textColor = Colors.blue;
-    } else {
-      textColor = Colors.grey;
-    }
-
     return Scaffold(
       body: Center(
         child: Stack(
           alignment: Alignment.center,
           children: [
-            buildBattery(batteryState),
+            buildBattery(batteryState, level.toDouble()),
             const Column(
               mainAxisAlignment: MainAxisAlignment.center,
             ),
