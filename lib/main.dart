@@ -50,6 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void getBatteryPercentage() async {
     final batteryLevel = await battery.batteryLevel;
 
+    if (batteryLevel == 100 && batteryState != BatteryState.full) {
+      setState(() {
+        batteryState = BatteryState.full;
+      });
+    }
+
     level = batteryLevel;
 
     setState(() {});
@@ -70,9 +76,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  Widget buildBattery(BatteryState state, double animationValue) {
-    Color textColor = Colors.black;
+Widget buildBattery(BatteryState state, double animationValue) {
+  Color textColor;
 
+  if (level < 10) {
+    textColor = Colors.red;
+  } else if (level < 20) {
+    textColor = Colors.orange;
+  } else {
     switch (state) {
       case BatteryState.full:
         textColor = Colors.green;
@@ -85,42 +96,44 @@ class _MyHomePageState extends State<MyHomePage> {
         textColor = Colors.grey;
         break;
     }
-
-    return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 200),
-      tween: ColorTween(begin: textColor, end: textColor),
-      builder: (context, dynamic color, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            CustomPaint(
-              painter: CirclePainter(
-                color: color, // Adjusted to use animated color
-                batteryLevel: level.toDouble(),
-              ),
-              child: const SizedBox(
-                width: 200,
-                height: 200,
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$level%',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 50, // Adjusted to use animated color
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
   }
+
+  return TweenAnimationBuilder(
+    duration: const Duration(milliseconds: 200),
+    tween: ColorTween(begin: textColor, end: textColor),
+    builder: (context, dynamic color, child) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          CustomPaint(
+            painter: CirclePainter(
+              color: color, // Adjusted to use animated color
+              batteryLevel: level.toDouble(),
+            ),
+            child: const SizedBox(
+              width: 200,
+              height: 200,
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$level%',
+                style: TextStyle(
+                  color: color,
+                  fontSize: 50, // Adjusted to use animated color
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
