@@ -153,14 +153,29 @@ class CirclePainter extends CustomPainter {
       ..strokeWidth = 10
       ..style = PaintingStyle.stroke;
 
-    final sweepAngle = 360.0 * (batteryLevel / 100); // Adjusted here
+    final grayPaint = Paint()
+      ..color = Colors.grey.shade200 // Gray color for the unfilled part
+      ..strokeWidth = 10
+      ..style = PaintingStyle.stroke;
+
+    final sweepAngle = 360.0 * (batteryLevel / 100);
 
     canvas.drawArc(
       Rect.fromCircle(center: size.center(Offset.zero), radius: size.width / 2),
-      -90.0 * (pi / 180), // startAngle
-      sweepAngle * (pi / 180), // sweepAngle
+      -90.0 * (pi / 180),
+      sweepAngle * (pi / 180),
       false,
       paint,
+    );
+
+    // Draw the remaining unfilled part in gray
+    final remainingAngle = 360.0 - sweepAngle;
+    canvas.drawArc(
+      Rect.fromCircle(center: size.center(Offset.zero), radius: size.width / 2),
+      -90.0 * (pi / 180) + sweepAngle * (pi / 180),
+      remainingAngle * (pi / 180),
+      false,
+      grayPaint,
     );
   }
 
