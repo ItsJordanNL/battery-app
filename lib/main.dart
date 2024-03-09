@@ -38,6 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
   late Timer timer;
   late StreamSubscription streamSubscription;
 
+  // Additional properties for time estimation
+  DateTime? lastUpdateTime;
+  double drainingRate = 0; // percentage per millisecond
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
 
+    final now = DateTime.now();
+    if (lastUpdateTime != null && batteryLevel != level) {
+      final duration = now.difference(lastUpdateTime!);
+      drainingRate = (level - batteryLevel) / duration.inMilliseconds;
+    }
+
     level = batteryLevel;
+    lastUpdateTime = now;
 
     setState(() {});
   }
@@ -68,6 +79,21 @@ class _MyHomePageState extends State<MyHomePage> {
         batteryState = state;
       });
     });
+  }
+
+  // Calculate estimated time remaining in milliseconds
+  int calculateTimeRemaining() {
+    if (drainingRate > 0) {
+      return (level / drainingRate).toInt();
+    } else {
+      return -1; // Indicate that the draining rate is not available
+    }
+  }
+
+  // Format milliseconds into HH:mm:ss
+  String formatTime(int milliseconds) {
+    final Duration duration = Duration(milliseconds: milliseconds);
+    return '${duration.inHours}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
   @override
@@ -125,6 +151,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: color,
                     fontSize: 50, // Adjusted to use animated color
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Time remaining: ${formatTime(calculateTimeRemaining())}',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 16,
                   ),
                 ),
               ],
