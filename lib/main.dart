@@ -9,7 +9,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +24,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -76,64 +76,63 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-Widget buildBattery(BatteryState state, double animationValue) {
-  Color textColor;
+  Widget buildBattery(BatteryState state, double animationValue) {
+    Color textColor;
 
-  if (level <= 10) {
-    textColor = Colors.red;
-  } else if (level <= 20) {
-    textColor = Colors.orange;
-  } else {
-    switch (state) {
-      case BatteryState.full:
-        textColor = Colors.green;
-        break;
-      case BatteryState.charging:
-        textColor = Colors.blue;
-        break;
-      case BatteryState.discharging:
-      default:
-        textColor = Colors.grey;
-        break;
+    if (level <= 10) {
+      textColor = Colors.red;
+    } else if (level <= 20) {
+      textColor = Colors.orange;
+    } else {
+      switch (state) {
+        case BatteryState.full:
+          textColor = Colors.green;
+          break;
+        case BatteryState.charging:
+          textColor = Colors.blue;
+          break;
+        case BatteryState.discharging:
+        default:
+          textColor = Colors.grey;
+          break;
+      }
     }
-  }
 
-  return TweenAnimationBuilder(
-    duration: const Duration(milliseconds: 200),
-    tween: ColorTween(begin: textColor, end: textColor),
-    builder: (context, dynamic color, child) {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            painter: CirclePainter(
-              color: color, // Adjusted to use animated color
-              batteryLevel: level.toDouble(),
-            ),
-            child: const SizedBox(
-              width: 200,
-              height: 200,
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '$level%',
-                style: TextStyle(
-                  color: color,
-                  fontSize: 50, // Adjusted to use animated color
-                  fontWeight: FontWeight.bold,
-                ),
+    return TweenAnimationBuilder(
+      duration: const Duration(milliseconds: 200),
+      tween: ColorTween(begin: textColor, end: textColor),
+      builder: (context, dynamic color, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              painter: CirclePainter(
+                color: color, // Adjusted to use animated color
+                batteryLevel: level.toDouble(),
               ),
-            ],
-          ),
-        ],
-      );
-    },
-  );
-}
-
+              child: const SizedBox(
+                width: 200,
+                height: 200,
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$level%',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 50, // Adjusted to use animated color
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
