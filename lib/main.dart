@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Calculate estimated time remaining in milliseconds
   int calculateTimeRemaining() {
     if (drainingRate > 0) {
-      return (level / drainingRate).toInt();
+      return level ~/ drainingRate;
     } else {
       return -1; // Indicate that the draining rate is not available
     }
