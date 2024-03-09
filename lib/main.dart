@@ -103,71 +103,71 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  Widget buildBattery(BatteryState state, double animationValue) {
-    Color textColor;
+Widget buildBattery(BatteryState state, double animationValue) {
+  Color textColor;
 
-    if (level <= 10) {
-      textColor = Colors.red;
-    } else if (level <= 20) {
-      textColor = Colors.orange;
-    } else {
-      switch (state) {
-        case BatteryState.full:
-          textColor = Colors.green;
-          break;
-        case BatteryState.charging:
-          textColor = Colors.blue;
-          break;
-        case BatteryState.discharging:
-        default:
-          textColor = Colors.grey;
-          break;
-      }
+  if (level <= 10) {
+    textColor = Colors.red;
+  } else if (level <= 20) {
+    textColor = Colors.orange;
+  } else {
+    switch (state) {
+      case BatteryState.full:
+        textColor = Colors.green;
+        break;
+      case BatteryState.charging:
+        textColor = Colors.blue;
+        break;
+      case BatteryState.discharging:
+      default:
+        textColor = Colors.grey;
+        break;
     }
-
-    return TweenAnimationBuilder(
-      duration: const Duration(milliseconds: 200),
-      tween: ColorTween(begin: textColor, end: textColor),
-      builder: (context, dynamic color, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            CustomPaint(
-              painter: CirclePainter(
-                color: color, // Adjusted to use animated color
-                batteryLevel: level.toDouble(),
-              ),
-              child: const SizedBox(
-                width: 200,
-                height: 200,
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$level%',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 50, // Adjusted to use animated color
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Time remaining: ${formatTime(calculateTimeRemaining())}',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
   }
+
+  return TweenAnimationBuilder(
+    duration: const Duration(milliseconds: 200),
+    tween: ColorTween(begin: textColor, end: textColor),
+    builder: (context, dynamic color, child) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              CustomPaint(
+                painter: CirclePainter(
+                  color: color, // Adjusted to use animated color
+                  batteryLevel: level.toDouble(),
+                ),
+                child: const SizedBox(
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+              Text(
+                '$level%',
+                style: TextStyle(
+                  color: color,
+                  fontSize: 50, // Adjusted to use animated color
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Time remaining: ${formatTime(calculateTimeRemaining())}',
+            style: TextStyle(
+              color: textColor,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
