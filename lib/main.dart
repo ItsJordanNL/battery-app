@@ -79,9 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
 Widget buildBattery(BatteryState state, double animationValue) {
   Color textColor;
 
-  if (level < 10) {
+  if (level <= 10) {
     textColor = Colors.red;
-  } else if (level < 20) {
+  } else if (level <= 20) {
     textColor = Colors.orange;
   } else {
     switch (state) {
