@@ -182,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(
                 calculateChargingTimeRemaining() == -1
                     ? 'Calculating time until full...'
-                    : 'Time until fully charged: ${formatTime(calculateChargingTimeRemaining())}',
+                    : 'Time until full: ${formatTime(calculateChargingTimeRemaining())}',
                 style: TextStyle(
                   color: textColor,
                   fontSize: 16,
@@ -227,7 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Text(
           calculateTimeRemaining() == -1
               ? 'Calculating time until empty...'
-              : 'Time remaining: ${formatTime(calculateTimeRemaining())}',
+              : 'Time until empty: ${formatTime(calculateTimeRemaining())}',
           style: TextStyle(
             color: textColor,
             fontSize: 16,
