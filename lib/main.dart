@@ -140,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 25), // Adjusted distance
               Text(
                 'Battery fully charged',
                 style: TextStyle(
@@ -178,11 +178,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 25), // Adjusted distance
               Text(
                 calculateChargingTimeRemaining() == -1
                     ? 'Calculating time until full...'
-                    : 'Time until full: ${formatTime(calculateChargingTimeRemaining())}',
+                    : 'Time until fully charged: ${formatTime(calculateChargingTimeRemaining())}',
                 style: TextStyle(
                   color: textColor,
                   fontSize: 16,
@@ -223,11 +223,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 25), // Adjusted distance
         Text(
           calculateTimeRemaining() == -1
               ? 'Calculating time until empty...'
-              : 'Time until empty: ${formatTime(calculateTimeRemaining())}',
+              : 'Time remaining: ${formatTime(calculateTimeRemaining())}',
           style: TextStyle(
             color: textColor,
             fontSize: 16,
