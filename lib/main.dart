@@ -114,7 +114,42 @@ class _MyHomePageState extends State<MyHomePage> {
       switch (state) {
         case BatteryState.full:
           textColor = Colors.green;
-          break;
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    painter: CirclePainter(
+                      color: textColor,
+                      batteryLevel: level.toDouble(),
+                    ),
+                    child: const SizedBox(
+                      width: 200,
+                      height: 200,
+                    ),
+                  ),
+                  Text(
+                    '$level%',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Battery fully charged',
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          );
         case BatteryState.charging:
           textColor = Colors.blue;
           return Column(
