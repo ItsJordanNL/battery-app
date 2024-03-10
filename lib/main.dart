@@ -248,6 +248,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+          'OhmMyGod',
+          style: TextStyle(fontFamily: 'Mont'),
+        ),
+        backgroundColor: const Color(0xFF424549),
+        foregroundColor: Colors.white,
+      ),
       body: Center(
         child: Stack(
           alignment: Alignment.center,
